@@ -284,11 +284,10 @@ export class Reada {
     return _reada
   }
 
-  private applyMiddlewares<DataT, SetT extends BaseSetterT<DataT>, UseT>(
+  private applyMiddlewares<DataT, SetT extends BaseSetterT<DataT>, UseT extends BaseUseT<DataT>>(
     preparedStore: PreparedStoreT<DataT, SetT, UseT>
   ): PreparedStoreT<DataT, SetT, UseT> {
     return this.stagedMiddleware.reduce((final, middleware) => {
-      // @ts-ignore
       const storeWithMiddlewareApplied = middleware(final) as PreparedStoreT<DataT, SetT, UseT>
       return storeWithMiddlewareApplied
     }, preparedStore)
