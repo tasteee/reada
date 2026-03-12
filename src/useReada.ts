@@ -1,4 +1,4 @@
-import { reada } from 'reada'
+import { reada } from './reada'
 import { useMemo } from 'react'
 
 export const useReada = (() => {
@@ -26,7 +26,7 @@ export const useReada = (() => {
     return store
   }
 
-  const object = <DataT extends Object>(initialState: DataT) => {
+  const object = <DataT extends object>(initialState: DataT) => {
     const store = useMemo(() => reada.object<DataT>(initialState), [])
     store.use()
     return store

@@ -2,7 +2,7 @@ import { ReadaStore } from './reada'
 
 export type WatchReactionT<T> = (oldValue: T, newValue: T) => void
 
-export interface WatchOptionsT<T, S = T> {
+export type WatchOptionsT<T, S = T> = {
   selector: (state: T) => S
   reaction: (oldValue: S, newValue: S) => void
 }
