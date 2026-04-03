@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, act, cleanup } from '@testing-library/react'
-import { reada } from '../src/reada'
+import { reada } from '../src/react'
 import * as React from 'react'
 import { renderHook, StateObserver } from './helpers'
 

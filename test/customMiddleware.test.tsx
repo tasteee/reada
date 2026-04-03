@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { act } from '@testing-library/react'
-import { reada } from '../src/reada'
+import { reada } from '../src/react'
 
 type LogT = { action: string, args: any }
 

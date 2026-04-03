@@ -4,21 +4,28 @@
   "description": "Insanely simple, DX focused React state management.",
   "homepage": "https://github.com/tasteee/reada#readme",
   "type": "module",
-  "main": "./dist/reada.cjs",
-  "module": "./dist/reada.esm.js",
-  "jsdelivr": "./dist/reada.iife.js",
-  "types": "./dist/reada.d.ts",
+  "main": "./dist/core/index.cjs",
+  "module": "./dist/core/index.js",
+  "types": "./dist/core/index.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/reada.cjs",
-      "import": "./dist/reada.esm.js",
-      "types": "./dist/reada.d.ts"
+      "import": "./dist/core/index.js",
+      "require": "./dist/core/index.cjs",
+      "types": "./dist/core/index.d.ts"
+    },
+    "./react": {
+      "import": "./dist/react/index.js",
+      "require": "./dist/react/index.cjs",
+      "types": "./dist/react/index.d.ts"
     }
   },
   "typesVersions": {
     "*": {
+      "react": [
+        "./dist/react/index.d.ts"
+      ],
       "*": [
-        "./dist/reada.d.ts"
+        "./dist/core/index.d.ts"
       ]
     }
   },
@@ -30,8 +37,9 @@
   ],
   "scripts": {
     "dev": "vite --host",
-    "build": "vite build",
-    "postbuild": "dts-bundle-generator --verbose ./src/index.ts -o ./dist/reada.d.ts",
+    "build": "npm run build:js && npm run build:types",
+    "build:js": "vite build",
+    "build:types": "tsc -p tsconfig.build.json",
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "format": "prettier . --write",
@@ -62,6 +70,11 @@
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
   },
   "dependencies": {
     "immer": "^10.1.1",

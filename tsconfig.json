@@ -8,6 +8,7 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
+    "jsx": "react-jsx",
     "lib": ["ESNext", "DOM"],
     "moduleResolution": "Node",
     "strict": false,
@@ -24,6 +25,6 @@
     "declarationDir": "dist",
     "listEmittedFiles": true
   },
-  "include": ["src", "src/global.d.ts", "dist/index.d.ts", "test/dat.test.ts", "test/undoRedo.test.tsx"],
-  "exclude": ["**/*.test.ts", "node_modules", "test/**", ".history/**"]
+  "include": ["src", "test", "vite.config.ts"],
+  "exclude": ["node_modules", "dist", ".history/**"]
 }

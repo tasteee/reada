@@ -1,3 +1,7 @@
+export { Reada, reada } from './reada'
+export { ReadaStore } from './store'
+export { middleware } from './middleware'
+
 export type {
   ArraySetterT,
   AsyncSetterT,
@@ -14,22 +18,11 @@ export type {
   MiddlewareFunctionT,
   NumberSetterT,
   ObjectSetterT,
+  SelectorT,
   StringSetterT,
   SubscribeT,
   SubscriberT,
   WatchOptionsT,
   WatchReactionT,
   WatcherEntryT
-} from './core/types'
-
-export type {
-  ArrayUseT,
-  BaseUseT,
-  ObjectUseT,
-  PreparedArrayStoreT,
-  PreparedBooleanStoreT,
-  PreparedNumberStoreT,
-  PreparedObjectStoreT,
-  PreparedStoreT,
-  PreparedStringStoreT
-} from './react/types'
+} from './types'

@@ -1,140 +1,195 @@
 # reada
 
-⚛️ React stores.
-📍 Local and shared.
-🛟 TypeScript first.
-🤍 DX focused API.
-⚡ Simple and powerful.
+Reada is a framework-agnostic state core with a dreamy API and wrappers for popular frameworks.
+
+- Built on top of immer.
+- Tiny API surface, fast to learn.
+- Shared stores and local stores.
+- TypeScript-first, friendly inference.
+- Async-safe updates with `set.byAsync(...)`
+- Middleware support with undo/redo included
 
 ## Install
 
-Take your pick.
-
 ```sh
 npm add reada
+# or
 bun add reada
+# or
 yarn add reada
+# or
 pnpm add reada
 ```
 
-## Usage
+## 30-Second Start
 
-### Shared Stores
+Use this when you are working in normal JS/TS.
 
 ```ts
 import { reada } from 'reada'
 
-const $num = reada.number(100)
-const $str = reada.string('foo')
-const $bool = reada.boolean(true)
-const $arr = reada.array<number>([0, 1, 2])
+const $count = reada.number(0)
+$count.set(5)
+$count.set.add(2)
+console.log($count.state) // 7
 
-type MyObjectT = { name: string; age?: number; numbers?: number[] }
-const $obj = reada.object<MyObjectT>({ name: 'shane' })
+const unwatch = $count.watch((oldValue, newValue) => {
+  console.log('count changed', { oldValue, newValue })
+})
 
-$num.set(200)
-$num.state // 200
-$num.set.add(50)
-$num.state // 250
-$num.set.subtract(25)
-$num.state // 225
-$num.set.reset()
-$num.state // 100
-$num.use() // 100
-$num.use((state) => state * 10) // 1000
-
-$str.set('bar')
-$str.state // 'bar'
-$str.set.reset()
-$str.state // 'foo'
-
-$str.use() // 'foo'
-$str.use((state) => state.toUpperCase()) // 'FOO'
-
-$bool.set(false)
-$bool.state // false
-$bool.toggle()
-$bool.state // true
-$bool.set.reset()
-$bool.state // true
-
-$bool.use() // true
-$bool.use((state) => !state) // false
-
-$arr.set([10, 11, 12])
-$arr.state // [10, 11, 12]
-$arr.set.append(13)
-$arr.state // [10, 11, 12, 13]
-$arr.set.prepend(9)
-$arr.state // [9, 10, 11, 12, 13]
-$arr.set.append(1, 2) // append or prepend multiple
-$arr.state // [9, 10, 11, 12, 13, 1, 2]
-$arr.set.reset()
-$arr.state // [0, 1, 2]
-$arr.set.at(2, 99) // state[2] = 99
-
-$arr.use() // [0, 1, 99]
-$arr.use((state) => state.length) // 3
-$arr.use.find((value) => value > 1) // 99
-$arr.use.filter((value) => value > 0) // [99, 1]
-$arr.use.map((arr) => arr > 0) // [true, true, false]
-
-$obj.set({ name: 'sidharth', numbers: [1, 2] })
-$obj.state // { name: 'sidharth', numbers: [1, 2] }
-$obj.set.merge({ age: 25 })
-$obj.state // { name: 'sidharth', age: 25, numbers: [1, 2] }
-$obj.set.reset()
-$obj.state // { name: 'shane', numbers: [] }
-$obj.set.at('name', 'shane')
-$obj.set.at('numbers.2', 99)
-
-$obj.use() // { name: 'shane', numbers: [0, 1, 99 ]}
-$obj.use((state) => state.name) // 'shane'
-$obj.use.at('name') // 'shane'
-$obj.use.at('numbers.2') // 99
+$count.set(10) // { oldValue: 7, newValue: 10 }
+unwatch()
 ```
 
-### Local Stores
+## 30-Second React Start
 
-```ts
-import { reada } from 'reada'
+Use the React adapter to get `store.use(...)`.
 
-const Component = () => {
-  const num = reada.use.number(250)
-  const str = reada.use.string('hello')
-  const bool = reada.use.boolean(false)
-  const arr = reada.use.array([0, 99, 122])
-  const obj = reada.use.object({ foo: 'bar' })
+```tsx
+import { reada } from 'reada/react'
 
-  // Local stores have the exact same APIs.
-  const handleSomething = () => {
-    num.set(120)
-    num.add(10)
-    num.state // 130
-    str.set(str.state.toUpperCase())
-    str.state // 'HELLO'
-    bool.toggle()
-    bool.state // true
-    arr.set.append(222)
-    arr.set.prepend(123)
-    arr.set.at('1', 55)
-    arr.state // [123, 55, 99, 122, 222]
-    obj.set.merge({ baz: false })
-    // ... etc, etc, etc.
-  }
+const $count = reada.number(0)
+
+export function Counter() {
+  $count.use()
+
+  return (
+    <div>
+      <p>{$count.state}</p>
+      <button onClick={() => $count.set.add(1)}>Increment</button>
+      <button onClick={() => $count.set.subtract(1)}>Decrement</button>
+      <button onClick={() => $count.set.reset()}>Reset</button>
+    </div>
+  )
 }
 ```
 
-## Immer Powered Updates
+## Store Types
 
-```tsx
-const $user = reada.object({
-  name: 'Brooklyn',
+All stores have the same shape:
+
+- `state`
+- `set(...)`
+- `watch(...)`
+- `store` (raw internal store)
+- `use(...)` only in `reada/react`
+
+Factory methods:
+
+- `reada.boolean(initial)`
+- `reada.number(initial)`
+- `reada.string(initial)`
+- `reada.array(initial)`
+- `reada.object(initial)`
+
+## Practical Examples
+
+### Boolean Store
+
+```ts
+import { reada } from 'reada'
+
+const $isOpen = reada.boolean(false)
+
+$isOpen.set(true)
+$isOpen.set.toggle()
+$isOpen.set.reset()
+```
+
+### Number Store
+
+```ts
+import { reada } from 'reada'
+
+const $price = reada.number(100)
+
+$price.set(250)
+$price.set.add(25)
+$price.set.subtract(50)
+$price.set.reset()
+```
+
+### String Store
+
+```ts
+import { reada } from 'reada'
+
+const $name = reada.string('rookie')
+
+$name.set('pro')
+$name.set.by((draft) => draft.toUpperCase())
+$name.set.reset()
+```
+
+### Array Store
+
+```ts
+import { reada } from 'reada'
+
+const $items = reada.array<number>([1, 2, 3])
+
+$items.set([4, 5])
+$items.set.append(6, 7)
+$items.set.prepend(0)
+$items.set.lookup(1, 99)
+$items.set.reset()
+```
+
+### Object Store
+
+```ts
+import { reada } from 'reada'
+
+type UserT = {
+  name: string
+  age: number
+  tags: string[]
+}
+
+const $user = reada.object<UserT>({
+  name: 'Shane',
   age: 30,
-  skills: ['JavaScript', 'React']
+  tags: ['builder']
 })
 
-$user.set.by((draft) => {
+$user.set({ age: 31 })
+$user.set.lookup('tags.1', 'maintainer')
+$user.set.replace({ name: 'Shane', age: 40, tags: [] })
+$user.set.reset()
+```
+
+## Derived Reads In React
+
+```tsx
+import { reada } from 'reada/react'
+
+const $cart = reada.array<{ id: string; price: number }>([])
+
+export function CartSummary() {
+  const itemCount = $cart.use((state) => state.length)
+  const total = $cart.use((state) => state.reduce((sum, item) => sum + item.price, 0))
+
+  return (
+    <div>
+      <p>Items: {itemCount}</p>
+      <p>Total: ${total}</p>
+    </div>
+  )
+}
+```
+
+## Immer-Powered Updates
+
+```ts
+import { reada } from 'reada'
+
+const $profile = reada.object({
+  name: 'Brooklyn',
+  age: 30,
+  skills: ['TypeScript']
+})
+
+$profile.set.by((draft) => {
   draft.name = draft.name.toUpperCase()
   draft.age += 1
   draft.skills.push('reada')
@@ -143,55 +198,83 @@ $user.set.by((draft) => {
 
 ## Async Updates
 
-```tsx
-const $userIds = reada.array([])
+```ts
+import { reada } from 'reada'
 
-await $userIds.set.by(async (draft) => {
-  draft.length = 0 // Clear existing ids.
+const $ids = reada.array<number>([])
 
+await $ids.set.byAsync(async () => {
   const response = await fetch('/users')
   const data = await response.json()
 
-  data.users.forEach((user) => draft.push(user.id))
+  return data.users.map((user: { id: number }) => user.id)
 })
 ```
 
-### Middleware
+## Local Component Stores (React)
 
-#### Custom Middleware
+Use `useReada` when each component instance should own its own store.
 
 ```tsx
-// Create a logging middleware:
-const loggingMiddleware = (storeName: string) => (store) => {
+import { useReada } from 'reada/react'
+
+export function LocalCounter() {
+  const count = useReada.number(10)
+
+  return <button onClick={() => count.set.add(1)}>{count.state}</button>
+}
+```
+
+## Middleware
+
+### Custom Middleware
+
+```ts
+import { reada } from 'reada'
+
+const loggerMiddleware = <StoreT extends { set: (...args: any[]) => any }>(store: StoreT) => {
   const originalSet = store.set
 
-  store.set = (...args) => {
-    console.log(`${storeName}.set`, args)
+  store.set = ((...args: any[]) => {
+    console.log('set called with', args)
     return originalSet(...args)
-  }
+  }) as StoreT['set']
 
   return store
 }
 
-// Apply middleware:
-const enhancedReada = reada.withMiddleware(loggingMiddleware)
-const $settings = enhancedReada.object({ theme: 'light'})
+const enhancedReada = reada.withMiddleware(loggerMiddleware)
+const $settings = enhancedReada.object({ theme: 'light' })
+
+$settings.set({ theme: 'dark' })
 ```
 
-#### undoRedo middleware
+### undoRedo Middleware
 
 ```ts
 import { reada } from 'reada'
 
 const undoRedo = reada.middleware.undoRedo({ maxHistory: 50 })
 const enhancedReada = reada.withMiddleware(undoRedo)
-const $myStore = enhancedReada.array([0, 5, 10])
 
-$myStore.set.append(15)
-$myStore.set.undo()
-$myStore.set.redo()
+const $count = enhancedReada.number(0)
+
+$count.set(1)
+$count.set(2)
+$count.set.undo()
+$count.set.redo()
 ```
 
-## TODO
+## Import Guide
 
-- [ ] Improve documentation on custom middleware.
+```ts
+// Core only
+import { reada } from 'reada'
+
+// React adapter
+import { reada, useReada, useStore } from 'reada/react'
+```
+
+It stays out of your way and lets you ship fast.
+
+Call now while supplies last.

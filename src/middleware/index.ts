@@ -1,5 +1,1 @@
-import { undoRedoMiddleware } from './undoRedo'
-
-export const middleware = {
-  undoRedo: undoRedoMiddleware
-}
+export { middleware } from '../core/middleware'
