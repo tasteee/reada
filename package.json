@@ -1,0 +1,19 @@
+{
+  "name": "reada",
+  "module": "index.ts",
+  "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "core:test": "bun run --cwd packages/core test",
+    "react:test": "bun run --cwd packages/react test",
+    "test": "bun run --workspaces --if-present test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

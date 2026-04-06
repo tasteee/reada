@@ -1,0 +1,30 @@
+{
+  "name": "@reada/react",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run --environment happy-dom",
+    "test:types": "tsc -p tsconfig.json --noEmit",
+    "check": "bun run test ; bun run test:types"
+  },
+  "dependencies": {
+    "@reada/core": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@testing-library/react": "latest",
+    "@types/bun": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "happy-dom": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
+  }
+}

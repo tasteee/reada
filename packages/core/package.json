@@ -1,0 +1,17 @@
+{
+  "name": "@reada/core",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./source/index.ts"
+  },
+  "scripts": {
+    "test": "bun test source/__tests__",
+    "test:types": "tsc -p tsconfig.json --noEmit",
+    "check": "bun run test ; bun run test:types"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.0.0"
+  }
+}
